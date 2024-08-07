@@ -221,9 +221,6 @@ def find_areas(index, img_path, save_dir):
     mask = ndimage.binary_opening(mask, np.ones((5, 5)), iterations=1).astype(np.uint8)
   
 
-
-
-
     mask_white = np.copy(mask)
     mask_white[empty_space] = 1
 
@@ -248,13 +245,6 @@ def find_areas(index, img_path, save_dir):
     ax.imshow(np.clip(index, lower, upper), cmap="RdYlGn", aspect='auto')
     ax.scatter(centers_cluster[:, 1], centers_cluster[:, 0], s=0.5 * spot_size, c='dodgerblue', edgecolors='black', linewidth=5)
     f.savefig(os.path.join(save_dir, 'centers.png'), transparent=True)
-
-    # plt.figure()
-    # plt.imshow(np.clip(index, lower, upper), cmap="RdYlGn", aspect='auto')
-    # plt.scatter(centers_cluster[:, 1], centers_cluster[:, 0], s=0.5 * spot_size, c='dodgerblue', edgecolors='black', linewidth=5)
-    # plt.savefig(os.path.join(save_dir, 'centers.png'), transparent=True)
-    # plt.close()
-
     return centers_cluster
 
 
@@ -299,230 +289,10 @@ def process_problematic_areas(input_image, index, output_dir):
 
     print('Done!')
 
-# Example usage
-# process_problematic_areas('path/to/image.tif', 'path/to/index.npy', 'path/to/output')
-    
-# print("testing 123.....")
-
-# index_path = "/Users/icom/Desktop/temp_dir/EP-11-29590_0007_0013_VARI.npy"
-# image_path = "/Users/icom/Desktop/temp_dir/EP-11-29590_0007_0013_VARI.tif"
-# save_directory = "/Users/icom/Desktop/test_prob"
-
-# find_areas(index_path, image_path,save_directory)
-
-# print("Done!")
-# end of problematic areas detection logic
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 app = Flask(__name__)
 mpl.use('agg')
-# Set the upload folder and allowed extensions
-# UPLOAD_FOLDER = 'uploads'
-# ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# def allowed_file(filename):
-#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-# @app.route('/')
-# def index():
-#     return render_template('index.html')
-
-# @app.route('/upload', methods=['POST'])
-# def upload_file():
-
-#     if 'file' not in request.files:
-#         return redirect(request.url)
-#     file = request.files['file']
-#     if file.filename == '':
-#         return redirect(request.url)
-#     # Check if the post request has the file part
-#     # if 'file' not in request.files:
-#     #     flash('No file part')
-#     #     return redirect(request.url)
-    
-#     # file = request.files['file']
-    
-#     # If user does not select file, browser also submit an empty part without filename
-#     if file.filename == '':
-#         flash('No selected file')
-#         return redirect(request.url)
-    
-#     if file and allowed_file(file.filename):
-#         filename = secure_filename(file.filename)
-#         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-#         return render_template('index.html', filename=filename)
-
-# @app.route('/process', methods=['POST'])
-# def process():
-#     filename = request.form['filename']
-#     indices = request.form.getlist('indices')
-#     input_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-#     output_dir = 'results'
-#     results = calculate_vegetation_indices(input_path, output_dir, indices)
-#     return render_template('results.html', results=results)
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-
-
-
-
-
-
-
-
-
-
-# from flask import Flask, render_template, request, redirect, url_for, flash
-# import os
-# import numpy as np
-# import cv2
-# import matplotlib.pyplot as plt
-# from PIL import Image
-# import matplotlib as mpl
-# from osgeo import gdal, osr
-
-# mpl.use('agg')
-
-# app = Flask(__name__)
-# app.secret_key = 'farainechikwira43'
-
-# # Create a class for each vegetation_index
-# class Indexes:
-#     def __init__(self, img):
-#         self.img = img
-#         self.R = self.img[:, :, 2].astype(np.float32)
-#         self.G = self.img[:, :, 1].astype(np.float32)
-#         self.B = self.img[:, :, 0].astype(np.float32)
-
-#     # Visible Atmospheric Resistant Index
-#     def VARI(self):
-#         vari = np.divide((self.G - self.R), (self.G + self.R - self.B + 0.00001))
-#         return np.clip(vari, -1, 1)
-
-#     # Green Leaf Index
-#     def GLI(self):
-#         gli = np.divide((2 * self.G - self.R - self.B), (2 * self.G + self.R + self.B + 0.00001))
-#         return np.clip(gli, -1, 1)
-
-#     # Normalized Green Red Difference Index
-#     def NGRDI(self):
-#         v_ndvi = np.divide((self.G - self.R), (self.G + self.R + 0.00001))
-#         return np.clip(v_ndvi, -1, 1)
-
-#     # Normalized Green Blue Difference Index
-#     def NGBDI(self):
-#         ngbdi = (self.G - self.B) / (self.G + self.B + 0.00001)
-#         return np.clip(ngbdi, -1, +1)
-
-#     # Get the desired index
-#     def get_index(self, index_name):
-#         if index_name == 'VARI':
-#             return self.VARI()
-#         elif index_name == 'GLI':
-#             return self.GLI()
-#         elif index_name == 'NGRDI':
-#             return self.NGRDI()
-#         elif index_name == 'NGBDI':
-#             return self.NGBDI()
-#         else:
-#             print('Unknown index')
-
-
-# # Function to process uploaded image and calculate indices
-# def process_image(file, output_path, indices):
-#     img = cv2.imdecode(np.fromstring(file.read(), np.uint8), cv2.IMREAD_UNCHANGED)
-#     h, w, ch = img.shape
-
-#     if ch > 3:
-#         image = img[:, :, :3].astype(float)
-#         image[img[:, :, 3] == 0] = np.nan
-#         empty_space = img[:, :, 3] == 0
-#     else:
-#         image = img
-
-#     Idx = Indexes(image)
-
-#     for index_name in indices:
-#         idx = Idx.get_index(index_name)
-
-#         # Your calculation logic and saving here
-#         # For example:
-#         # Calculate index histogram
-#         perc, edges, _ = plt.hist(idx[~np.isnan(idx)], bins=100, range=(-1, 1), color='darkcyan', edgecolor='black')
-#         plt.close()
-
-#         # Find the real min, max values of the vegetation_index
-#         lower, upper = perc[0], perc[-1]
-#         index_clipped = np.clip(idx, lower, upper)
-
-#         # Convert to RGBA image
-#         cm = plt.get_cmap('RdYlGn')
-#         cNorm = mpl.colors.Normalize(vmax=upper, vmin=lower)
-#         colored_image = cm(cNorm(index_clipped))
-#         img_rgba = Image.fromarray(np.uint8(colored_image * 255), mode='RGBA')
-
-#         # Save the image
-#         img_name = os.path.splitext(file.filename)[0]
-#         output_filename = f"{img_name}_{index_name}.tif"
-#         output_filepath = os.path.join(output_path, output_filename)
-#         img_rgba.save(output_filepath)
-
-
-# @app.route('/', methods=['GET', 'POST'])
-# def index():
-#     if request.method == 'POST':
-#         if 'file' not in request.files:
-#             flash('No file part')
-#             return redirect(request.url)
-
-#         file = request.files['file']
-#         indices = request.form.getlist('indices')
-#         output_path = request.form['output_path']
-
-#         if file.filename == '':
-#             flash('No selected file')
-#             return redirect(request.url)
-
-#         if file and indices and output_path:
-#             # process_image(file, output_path, indices)
-#             print("at least we reached this logic")
-#             print(file)
-#             print("####")
-#             print(file.filename)
-#             calculate_vegetation_indices(file, output_path, indices)
-#             flash('Indices calculated and saved successfully')
-#             return redirect(url_for('index'))
-
-#     return render_template('index.html')
-
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-
-# def process():
-#     filename = request.form['filename']
-#     indices = request.form.getlist('indices')
-#     input_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-#     output_dir = 'results'
-#     results = calculate_vegetation_indices(input_path, output_dir, indices)
-#     return render_template('results.html', results=results)
-# from flask_ngrok import run_with_ngrok
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -533,28 +303,6 @@ CORS(app, origins=['http://localhost:8000'])
 @app.route('/')
 def index():
     return render_template('index.html')
-
-# @app.route('/upload', methods=['POST'])
-# def upload_file():
-#     if 'file' not in request.files:
-#         flash('No file part')
-#         return redirect(request.url)
-#     file = request.files['file']
-#     if file.filename == '':
-#         flash('No selected file')
-#         return redirect(request.url)
-#     if file:
-#         # Instead of saving the file, directly process it
-#         selected_indices = request.form.getlist('index')
-#         output_dir = request.form['output_dir']
-#         img_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-#         file.save(img_path)
-#         results = calculate_vegetation_indices(img_path, output_dir, selected_indices)
-#         return render_template('results.html', results=results)
-
-# if __name__ == '__main__':
-#     app.config['UPLOAD_FOLDER'] = os.getcwd()  # Set the upload folder to the current working directory
-#     app.run()
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
